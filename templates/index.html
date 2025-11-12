@@ -3,32 +3,43 @@
 <head>
     <meta charset="UTF-8">
     <title>User Feedback</title>
-    <style>
-        body { font-family: Arial; margin: 40px; }
-        form { margin-bottom: 20px; }
-        input, textarea { width: 100%; margin-top: 5px; padding: 8px; }
-        button { padding: 8px 12px; background-color: #4CAF50; color: white; border: none; cursor: pointer; }
-        .feedback { border-bottom: 1px solid #ddd; margin-bottom: 10px; padding-bottom: 10px; }
-    </style>
+    <!-- Link external CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 </head>
 <body>
-    <h1>Submit Feedback</h1>
-    <form method="POST">
-        <label>Your Name:</label><br>
-        <input type="text" name="name" required><br>
-        <label>Message:</label><br>
-        <textarea name="message" required></textarea><br>
-        <button type="submit">Submit</button>
-    </form>
+    <header>
+        <h1>User Feedback Portal</h1>
+    </header>
 
-    <h2>Previous Feedback</h2>
-    {% for fb in feedbacks %}
-        <div class="feedback">
-            <strong>{{ fb[0] }}</strong><br>
-            <p>{{ fb[1] }}</p>
-        </div>
-    {% else %}
-        <p>No feedback yet.</p>
-    {% endfor %}
+    <main>
+        <section class="feedback-form">
+            <h2>Submit Feedback</h2>
+            <form method="POST">
+                <label>Your Name:</label><br>
+                <input type="text" name="name" placeholder="Enter your name" required><br>
+                
+                <label>Message:</label><br>
+                <textarea name="message" placeholder="Enter your feedback" required></textarea><br>
+                
+                <button type="submit">Submit</button>
+            </form>
+        </section>
+
+        <section class="feedback-list">
+            <h2>Previous Feedback</h2>
+            {% for fb in feedbacks %}
+                <div class="feedback">
+                    <strong>{{ fb[0] }}</strong><br>
+                    <p>{{ fb[1] }}</p>
+                </div>
+            {% else %}
+                <p>No feedback yet.</p>
+            {% endfor %}
+        </section>
+    </main>
+
+    <footer>
+        <p>© 2025 User Feedback Portal. All rights reserved.</p>
+    </footer>
 </body>
 </html>
