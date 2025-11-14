@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: feedback-app-service
+spec:
+  type: LoadBalancer
+  selector:
+    app: feedback-app
+  ports:
+  - port: 80
+    targetPort: 80
+    protocol: TCP
+ 
