@@ -2,44 +2,50 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>User Feedback</title>
-    <!-- Link external CSS -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <title>User Feedback Portal</title>
+    <style>
+        body { font-family: Arial; margin:0; padding:0; background:#f4f4f4; }
+        header { background:#333; color:white; padding:15px 30px; display:flex; justify-content:space-between; align-items:center; }
+        main { padding:20px 30px; max-width:800px; margin:auto; }
+        .feedback { background:white; padding:15px; margin:10px 0; border-radius:6px; box-shadow:0 2px 5px rgba(0,0,0,0.1); }
+        .feedback strong { display:block; margin-bottom:5px; }
+        form { background:white; padding:15px; border-radius:6px; margin:15px 0; box-shadow:0 2px 5px rgba(0,0,0,0.1); }
+        input, textarea { width:100%; padding:10px; margin:5px 0; border-radius:5px; border:1px solid #ccc; }
+        button { padding:10px 15px; background:#007bff; color:white; border:none; border-radius:5px; cursor:pointer; }
+        button:hover { background:#0056b3; }
+        .nav-menu a { color:white; text-decoration:none; margin-left:15px; }
+    </style>
 </head>
 <body>
     <header>
         <h1>User Feedback Portal</h1>
+        <div class="nav-menu">
+            {% if role == 'admin' %}
+                Admin | <a href="/logout">Logout</a>
+            {% else %}
+                {{ username }} | <a href="/logout">Logout</a>
+            {% endif %}
+        </div>
     </header>
 
     <main>
-        <section class="feedback-form">
-            <h2>Submit Feedback</h2>
-            <form method="POST">
-                <label>Your Name:</label><br>
-                <input type="text" name="name" placeholder="Enter your name" required><br>
-                
-                <label>Message:</label><br>
-                <textarea name="message" placeholder="Enter your feedback" required></textarea><br>
-                
-                <button type="submit">Submit</button>
-            </form>
-        </section>
-
-        <section class="feedback-list">
-            <h2>Previous Feedback</h2>
+        {% if role == 'admin' %}
+            <h2>All Feedback</h2>
             {% for fb in feedbacks %}
                 <div class="feedback">
-                    <strong>{{ fb[0] }}</strong><br>
+                    <strong>{{ fb[0] }}</strong>
                     <p>{{ fb[1] }}</p>
                 </div>
             {% else %}
                 <p>No feedback yet.</p>
             {% endfor %}
-        </section>
-    </main>
+        {% endif %}
 
-    <footer>
-        <p>© 2025 User Feedback Portal. All rights reserved.</p>
-    </footer>
+        <h2>Submit Feedback</h2>
+        <form method="POST">
+            <textarea name="message" placeholder="Enter your feedback" required></textarea>
+            <button type="submit">Submit</button>
+        </form>
+    </main>
 </body>
 </html>
