@@ -4,6 +4,11 @@ FROM python:3.11-slim
 # Set working directory
 WORKDIR /app
 
+# Install system dependencies (if needed)
+RUN apt-get update && apt-get install --no-install-recommends -y \
+        build-essential \
+    && rm -rf /var/lib/apt/lists/*
+    
 # Copy files
 COPY requirements.txt requirements.txt
 
