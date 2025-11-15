@@ -40,7 +40,7 @@ data:
     [OUTPUT]
         Name            cloudwatch
         Match           *
-        region          us-east-1 # <<--- CHANGE THIS TO YOUR AWS REGION
-        log_group_name  /eks/feedback-app/logs # <<--- Your main Log Group Name
+        Region          us-east-1 # <<--- CHANGE THIS TO YOUR AWS REGION
+        Log_Group_Name  /eks/feedback-app/logs # <<--- Your main Log Group Name
         log_stream_name ${kubernetes['namespace_name']}.${kubernetes['pod_name']}.${kubernetes['container_name']}
         auto_create
