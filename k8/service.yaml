@@ -4,7 +4,7 @@ metadata:
   name: feedback-app-service
   namespace: test
 spec:
-  type: LoadBalancer
+  type: NodePort
   selector:
     app: feedback-app
   ports:
