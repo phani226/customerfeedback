@@ -25,4 +25,4 @@ spec:
         image: 920971363988.dkr.ecr.us-east-1.amazonaws.com/feedback-app-ecr:v2.0
         imagePullPolicy: Always
         ports:
-        - containerPort: 80
+        - containerPort: 5000
