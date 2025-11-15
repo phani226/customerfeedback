@@ -7,11 +7,11 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: feedback-app-deployment
-  namespace: test 
+  namespace: test
   labels:
     app: feedback-app
 spec:
-  replicas: 2
+  replicas: 1   # Must be 1 because SQLite cannot run with multi-pod writes
   selector:
     matchLabels:
       app: feedback-app
@@ -26,3 +26,14 @@ spec:
         imagePullPolicy: Always
         ports:
         - containerPort: 5000
+
+        # MOUNT SQLITE DATABASE DIRECTORY
+        volumeMounts:
+        - name: sqlite-storage
+          mountPath: /app/database
+
+      # PVC FOR SQLITE
+      volumes:
+      - name: sqlite-storage
+        persistentVolumeClaim:
+          claimName: sqlite-pvc

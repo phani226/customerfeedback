@@ -4,7 +4,9 @@ import os
 
 app = Flask(__name__)
 app.secret_key = "your_secret_key"
-DB_PATH = "feedback.db"
+DB_PATH = os.path.join("database", "feedback.db")
+os.makedirs("database", exist_ok=True)
+
 
 # Sample backup feedback
 backup_feedback = [
