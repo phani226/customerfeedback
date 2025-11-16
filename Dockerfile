@@ -17,13 +17,8 @@ RUN pip install --no-cache-dir -r requirements.txt \
 # Copy the entire project
 COPY . .
 
-# Create DB folder and set correct permissions BEFORE switching user
-RUN mkdir -p /app/database && chown -R flaskuser:flaskuser /app
-
-# Create non-root user
-RUN useradd -m flaskuser
-
-USER flaskuser
+# All previous lines for 'useradd', 'chown', and 'USER flaskuser' have been removed.
+# The container will now run as the default user, which is root (UID 0).
 
 # Expose Flask port
 EXPOSE 5000
