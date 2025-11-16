@@ -17,9 +17,6 @@ RUN pip install --no-cache-dir -r requirements.txt \
 # Copy the entire project
 COPY . .
 
-# FIX: Ensure database directory is writable
-RUN mkdir -p /app/database && chmod -R 777 /app/database
-
 # Expose Flask port
 EXPOSE 5000
 
