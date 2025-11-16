@@ -1,0 +1,10 @@
+# This command creates the file named .dockerignore and puts the necessary
+# content inside it. Run this in your project's root directory.
+
+cat > .dockerignore << EOF
+database/
+.venv/
+venv/
+__pycache__/
+*.pyc
+EOF
