@@ -20,8 +20,6 @@ spec:
       labels:
         app: feedback-app
     spec:
-      securityContext: 
-        fsGroup: 1000
       containers:
       - name: feedback-app-container
         image: 920971363988.dkr.ecr.us-east-1.amazonaws.com/feedback-app-ecr:v2.0
