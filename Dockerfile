@@ -17,13 +17,12 @@ RUN pip install --no-cache-dir -r requirements.txt \
 # Copy the entire project
 COPY . .
 
-# 1. Create non-root user with explicit UID/GID 1000 (still running as root)
-RUN useradd -m -u 1000 -g 1000 flaskuser
-
-# 2. Create DB folder and set permissions (must be run as root)
+# Create DB folder and set correct permissions BEFORE switching user
 RUN mkdir -p /app/database && chown -R flaskuser:flaskuser /app
 
-# 3. Finally, switch to the non-root user
+# Create non-root user
+RUN useradd -m flaskuser
+
 USER flaskuser
 
 # Expose Flask port
