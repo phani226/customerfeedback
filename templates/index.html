@@ -7,45 +7,67 @@
         body { font-family: Arial; margin:0; padding:0; background:#f4f4f4; }
         header { background:#333; color:white; padding:15px 30px; display:flex; justify-content:space-between; align-items:center; }
         main { padding:20px 30px; max-width:800px; margin:auto; }
+
+        .nav-menu a {
+            color:white;
+            text-decoration:none;
+            margin-left:15px;
+            padding:6px 12px;
+            border-radius:5px;
+        }
+
+        .active {
+            background: #007bff;
+            color:white !important;
+        }
+
         .feedback { background:white; padding:15px; margin:10px 0; border-radius:6px; box-shadow:0 2px 5px rgba(0,0,0,0.1); }
-        .feedback strong { display:block; margin-bottom:5px; }
         form { background:white; padding:15px; border-radius:6px; margin:15px 0; box-shadow:0 2px 5px rgba(0,0,0,0.1); }
-        input, textarea { width:100%; padding:10px; margin:5px 0; border-radius:5px; border:1px solid #ccc; }
+        textarea { width:100%; padding:10px; margin:5px 0; border-radius:5px; border:1px solid #ccc; }
         button { padding:10px 15px; background:#007bff; color:white; border:none; border-radius:5px; cursor:pointer; }
         button:hover { background:#0056b3; }
-        .nav-menu a { color:white; text-decoration:none; margin-left:15px; }
     </style>
 </head>
 <body>
-    <header>
-        <h1>User Feedback Portal</h1>
-        <div class="nav-menu">
-            {% if role == 'admin' %}
-                Admin | <a href="/logout">Logout</a>
-            {% else %}
-                {{ username }} | <a href="/logout">Logout</a>
-            {% endif %}
-        </div>
-    </header>
 
-    <main>
+<header>
+    <h1>User Feedback Portal</h1>
+
+    <div class="nav-menu">
         {% if role == 'admin' %}
-            <h2>All Feedback</h2>
-            {% for fb in feedbacks %}
-                <div class="feedback">
-                    <strong>{{ fb[0] }}</strong>
-                    <p>{{ fb[1] }}</p>
-                </div>
-            {% else %}
-                <p>No feedback yet.</p>
-            {% endfor %}
+            <a href="/submit-feedback" class="{% if active_page == 'submit' %}active{% endif %}">Submit Feedback</a>
+            <a href="/admin/feedback-list" class="{% if active_page == 'list' %}active{% endif %}">View Feedback</a>
+            <a href="/logout">Logout</a>
+        {% else %}
+            {{ username }}
+            <a href="/logout">Logout</a>
         {% endif %}
+    </div>
+</header>
 
+<main>
+
+    {% if show_list %}
+        <h2>All Feedback</h2>
+        {% for fb in feedbacks %}
+            <div class="feedback">
+                <strong>{{ fb[0] }}</strong>
+                <p>{{ fb[1] }}</p>
+            </div>
+        {% else %}
+            <p>No feedback available.</p>
+        {% endfor %}
+    {% endif %}
+
+    {% if show_form %}
         <h2>Submit Feedback</h2>
         <form method="POST">
             <textarea name="message" placeholder="Enter your feedback" required></textarea>
             <button type="submit">Submit</button>
         </form>
-    </main>
+    {% endif %}
+
+</main>
+
 </body>
 </html>

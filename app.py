@@ -7,7 +7,6 @@ app.secret_key = "your_secret_key"
 DB_PATH = os.path.join("database", "feedback.db")
 os.makedirs("database", exist_ok=True)
 
-
 # Sample backup feedback
 backup_feedback = [
     ("user1", "User1's first feedback"),
@@ -16,9 +15,7 @@ backup_feedback = [
     ("user1", "User1's second feedback")
 ]
 
-# Initialize database
 def init_db():
-    db_exists = os.path.exists(DB_PATH)
     with sqlite3.connect(DB_PATH) as conn:
         conn.execute("""
             CREATE TABLE IF NOT EXISTS feedback (
@@ -27,7 +24,6 @@ def init_db():
                 message TEXT NOT NULL
             )
         """)
-        # Restore backup if table empty
         count = conn.execute("SELECT COUNT(*) FROM feedback").fetchone()[0]
         if count == 0:
             conn.executemany(
@@ -36,7 +32,7 @@ def init_db():
             )
             conn.commit()
 
-# Login page
+# Login
 @app.route("/login", methods=["GET", "POST"])
 def login():
     error = None
@@ -44,20 +40,19 @@ def login():
         uid = request.form.get("uid")
         password = request.form.get("password")
 
-        # Admin
+        # Admin login
         if uid == "admin" and password == "admin":
             session["role"] = "admin"
             session["username"] = "admin"
             return redirect("/")
 
-        # Users
+        # User login
         elif uid in ["user1", "user2", "user3"] and password == "1234":
             session["role"] = "user"
             session["username"] = uid
             return redirect("/")
 
-        else:
-            error = "Invalid credentials"
+        error = "Invalid credentials"
 
     return render_template("login.html", error=error)
 
@@ -67,16 +62,24 @@ def logout():
     session.clear()
     return redirect("/login")
 
-# Main page
-@app.route("/", methods=["GET", "POST"])
-def index():
+# Home
+@app.route("/")
+def home():
+    if "username" not in session:
+        return redirect("/login")
+
+    if session["role"] == "admin":
+        return redirect("/admin/feedback-list")
+    return redirect("/submit-feedback")
+
+# Submit Feedback Page
+@app.route("/submit-feedback", methods=["GET", "POST"])
+def submit_feedback():
     if "username" not in session:
         return redirect("/login")
 
     username = session["username"]
-    role = session["role"]
 
-    # Handle new feedback submission
     if request.method == "POST":
         message = request.form.get("message")
         if message:
@@ -86,21 +89,37 @@ def index():
                     (username, message)
                 )
                 conn.commit()
-            return redirect("/")
+        return redirect("/submit-feedback")
 
-    # Fetch feedback
+    return render_template("index.html",
+                           role=session["role"],
+                           username=username,
+                           show_form=True,
+                           show_list=False,
+                           active_page="submit")
+
+# Admin List Page
+@app.route("/admin/feedback-list")
+def admin_feedback_list():
+    if "username" not in session:
+        return redirect("/login")
+
+    if session["role"] != "admin":
+        return redirect("/submit-feedback")
+
     with sqlite3.connect(DB_PATH) as conn:
-        if role == "admin":
-            feedbacks = conn.execute(
-                "SELECT username, message FROM feedback ORDER BY id DESC"
-            ).fetchall()
-        else:
-            feedbacks = []  # Users do not see other feedback
+        feedbacks = conn.execute(
+            "SELECT username, message FROM feedback ORDER BY id DESC"
+        ).fetchall()
 
-    return render_template("index.html", feedbacks=feedbacks, role=role, username=username)
-    
+    return render_template("index.html",
+                           role="admin",
+                           username="admin",
+                           feedbacks=feedbacks,
+                           show_form=False,
+                           show_list=True,
+                           active_page="list")
 
 if __name__ == "__main__":
     init_db()
-    # 💥 CRITICAL FIX: Ensure Flask binds to the container's external IP
-    app.run(host='0.0.0.0', port=5000, debug=True)
+    app.run(debug=True)
