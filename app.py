@@ -42,6 +42,8 @@ def init_db():
                 backup_feedback
             )
             conn.commit()
+# ✅ Run DB initialization immediately 
+init_db()
 
 # Login page
 @app.route("/login", methods=["GET", "POST"])
@@ -104,10 +106,8 @@ def index():
         else:
             feedbacks = []  # Users do not see other feedback
 
-    return render_template("index.html", feedbacks=feedbacks, role=role, username=username)
-    
+    return render_template("index.html", feedbacks=feedbacks, role=role, username=username) 
 
 if __name__ == "__main__":
-    init_db()
     # 💥 CRITICAL FIX: Ensure Flask binds to the container's external IP
     app.run(host='0.0.0.0', port=5000, debug=True)
