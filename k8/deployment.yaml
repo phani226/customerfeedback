@@ -22,7 +22,7 @@ spec:
     spec:
       containers:
       - name: feedback-app-container
-        image: 920971363988.dkr.ecr.us-east-1.amazonaws.com/feedback-app-ecr:test
+        image: 552205248031.dkr.ecr.us-east-1.amazonaws.com/feedback-app-ecr:v2.0
         imagePullPolicy: Always
         ports:
         - containerPort: 5000
