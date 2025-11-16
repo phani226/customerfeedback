@@ -4,8 +4,15 @@ import os
 
 app = Flask(__name__)
 app.secret_key = "your_secret_key"
-DB_PATH = os.path.join("database", "feedback.db")
-os.makedirs("database", exist_ok=True)
+#DB_PATH = os.path.join("database", "feedback.db")
+#os.makedirs("database", exist_ok=True)
+
+
+DB_DIR = "/app/database"   # absolute path
+DB_PATH = f"{DB_DIR}/feedback.db"
+
+# Ensure directory exists inside container after PVC mount
+os.makedirs(DB_DIR, exist_ok=True)
 
 
 # Sample backup feedback
