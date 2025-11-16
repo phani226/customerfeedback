@@ -20,8 +20,9 @@ COPY . .
 # Create DB folder and set correct permissions BEFORE switching user
 RUN mkdir -p /app/database && chown -R flaskuser:flaskuser /app
 
-# Create non-root user
-RUN useradd -m flaskuser
+# Create non-root user with explicit UID/GID 1000
+# THIS IS THE CRITICAL CHANGE: Matches the fsGroup: 1000 in your Deployment
+RUN useradd -m -u 1000 -g 1000 flaskuser 
 USER flaskuser
 
 # Expose Flask port
