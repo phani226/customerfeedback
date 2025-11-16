@@ -2,23 +2,194 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>User Feedback Portal</title>
+    <title>Feedback Portal</title>
+
+    <!-- AWS-like font (public alternative to Amazon Ember) -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+
     <style>
-        body { font-family: Arial; margin:0; padding:0; background:#f4f4f4; }
-        header { background:#333; color:white; padding:15px 30px; display:flex; justify-content:space-between; align-items:center; }
-        main { padding:20px 30px; max-width:800px; margin:auto; }
-        .feedback { background:white; padding:15px; margin:10px 0; border-radius:6px; box-shadow:0 2px 5px rgba(0,0,0,0.1); }
-        .feedback strong { display:block; margin-bottom:5px; }
-        form { background:white; padding:15px; border-radius:6px; margin:15px 0; box-shadow:0 2px 5px rgba(0,0,0,0.1); }
-        input, textarea { width:100%; padding:10px; margin:5px 0; border-radius:5px; border:1px solid #ccc; }
-        button { padding:10px 15px; background:#007bff; color:white; border:none; border-radius:5px; cursor:pointer; }
-        button:hover { background:#0056b3; }
-        .nav-menu a { color:white; text-decoration:none; margin-left:15px; }
+        body { 
+            font-family: 'Inter', Arial, sans-serif;
+            margin:0; 
+            padding:0; 
+            background: #f2f4f8 url('https://d1.awsstatic.com/homepage-consumerpoc/pattern-1.6c35a5ad1f3d85f1fdf0a1d57b36aa0f7e704d9b.png') repeat;
+        }
+
+        /* AWS Header */
+        header {
+            background: linear-gradient(90deg, #0b1f3a, #152e4d);
+            color:white;
+            padding:18px 30px;
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+            box-shadow:0 4px 10px rgba(0,0,0,0.3);
+            position: sticky;
+            top:0;
+            z-index:10;
+        }
+
+        header img {
+            height:32px;
+            margin-right:12px;
+        }
+
+        header .title-section {
+            display:flex;
+            align-items:center;
+        }
+
+        header h1 {
+            margin:0;
+            font-size:26px;
+            font-weight:700;
+            letter-spacing:0.5px;
+        }
+
+        .nav-menu a {
+            color:white; 
+            text-decoration:none; 
+            margin-left:15px; 
+            font-weight:600;
+            padding:6px 10px;
+            border-radius:4px;
+            transition:0.2s;
+        }
+
+        .nav-menu a:hover {
+            background:rgba(255,255,255,0.2);
+        }
+
+        /* Main */
+        main { 
+            padding:25px 30px; 
+            max-width:950px; 
+            margin:auto; 
+        }
+
+        /* AWS submenu tabs */
+        .submenu {
+            margin-bottom:20px;
+            padding-bottom:10px;
+            border-bottom:2px solid #ddd;
+        }
+
+        .submenu a {
+            margin-right:20px;
+            text-decoration:none;
+            font-weight:600;
+            padding:10px 18px;
+            border-radius:6px;
+            transition:0.3s;
+            background:white;
+            color:#0b1f3a;
+            border:1px solid transparent;
+        }
+
+        /* Active Tab */
+        .active-link {
+            background:#ff9900;
+            color:white !important;
+            border-color:#d98200;
+            box-shadow:0 2px 6px rgba(0,0,0,0.2);
+        }
+
+        .submenu a:hover {
+            background:#ffe2c0;
+        }
+
+        /* AWS Table */
+        table { 
+            width:100%; 
+            border-collapse: collapse; 
+            margin-top:20px; 
+            background:white;
+            border-radius:10px;
+            overflow:hidden;
+            box-shadow:0 2px 10px rgba(0,0,0,0.15);
+        }
+
+        th { 
+            padding:14px; 
+            background:#0b1f3a;
+            color:white;
+            font-size:15px;
+            letter-spacing:0.3px;
+        }
+
+        td { 
+            padding:12px; 
+            border-bottom:1px solid #eee; 
+            font-size:14px;
+        }
+
+        tr:hover { 
+            background:#f4f8ff; 
+        }
+
+        /* AWS Form */
+        form { 
+            background:white; 
+            padding:20px; 
+            border-radius:12px; 
+            margin:15px 0;
+            box-shadow:0 2px 10px rgba(0,0,0,0.15); 
+        }
+
+        textarea { 
+            width:100%; 
+            padding:14px; 
+            margin-bottom:15px; 
+            border-radius:8px; 
+            border:1px solid #cbd5e1; 
+            font-size:15px;
+            resize:vertical;
+            min-height:120px;
+        }
+
+        button { 
+            padding:12px 20px; 
+            background:#ff9900; 
+            color:white; 
+            border:none; 
+            border-radius:6px; 
+            cursor:pointer;
+            font-size:15px;
+            font-weight:600;
+            transition:0.2s;
+        }
+
+        button:hover { 
+            background:#d98200;
+        }
+        .submenu a:hover {
+            background:#ffe2c0;
+            color:#0b1f3a !important;
+        }
+
+        .active-link:hover {
+            background:#ff9900 !important;
+            color:navy !important;
+        }
+        /* Ensure highlighted tab text is always visible */
+        .submenu a.active-link,
+        .submenu a.active-link:link,
+        .submenu a.active-link:visited,
+        .submenu a.active-link:active {
+            color: navy !important;
+        }
+
+
     </style>
 </head>
+
 <body>
     <header>
-        <h1>User Feedback Portal</h1>
+        <div class="title-section">
+            <img src="https://a0.awsstatic.com/libra-css/images/logos/aws_logo_smile_1200x630.png" alt="AWS Logo">
+            <h1>Feedback Portal</h1>
+        </div>
+
         <div class="nav-menu">
             {% if role == 'admin' %}
                 Admin | <a href="/logout">Logout</a>
@@ -29,23 +200,49 @@
     </header>
 
     <main>
+
         {% if role == 'admin' %}
-            <h2>All Feedback</h2>
-            {% for fb in feedbacks %}
-                <div class="feedback">
-                    <strong>{{ fb[0] }}</strong>
-                    <p>{{ fb[1] }}</p>
-                </div>
-            {% else %}
-                <p>No feedback yet.</p>
-            {% endfor %}
+            <div class="submenu">
+                <a href="/?view=list" class="{% if view == 'list' %}active-link{% endif %}">Feedback List</a>
+                <a href="/?view=submit" class="{% if view == 'submit' %}active-link{% endif %}">Submit Feedback</a>
+            </div>
         {% endif %}
 
-        <h2>Submit Feedback</h2>
-        <form method="POST">
-            <textarea name="message" placeholder="Enter your feedback" required></textarea>
-            <button type="submit">Submit</button>
-        </form>
+        {% if view == "list" and role == "admin" %}
+            <h2>All Feedback</h2>
+
+            {% if feedbacks %}
+            <table>
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Username</th>
+                        <th>Feedback</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for fb in feedbacks %}
+                    <tr>
+                        <td>{{ loop.index }}</td>
+                        <td>{{ fb[0] }}</td>
+                        <td>{{ fb[1] }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+                <p>No feedback found.</p>
+            {% endif %}
+        {% endif %}
+
+        {% if view == "submit" or role != "admin" %}
+            <h2>Submit Feedback</h2>
+            <form method="POST">
+                <textarea name="message" placeholder="Enter your feedback" required></textarea>
+                <button type="submit">Submit</button>
+            </form>
+        {% endif %}
+
     </main>
 </body>
 </html>

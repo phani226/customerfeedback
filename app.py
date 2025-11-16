@@ -4,18 +4,13 @@ import os
 
 app = Flask(__name__)
 app.secret_key = "your_secret_key"
-#DB_PATH = os.path.join("database", "feedback.db")
-#os.makedirs("database", exist_ok=True)
 
-
-DB_DIR = "/app/database"   # absolute path
+DB_DIR = "/app/database"
 DB_PATH = f"{DB_DIR}/feedback.db"
 
-# Ensure directory exists inside container after PVC mount
 os.makedirs(DB_DIR, exist_ok=True)
 
-
-# Sample backup feedback
+# Backup feedback
 backup_feedback = [
     ("user1", "User1's first feedback"),
     ("user2", "User2's feedback"),
@@ -23,9 +18,8 @@ backup_feedback = [
     ("user1", "User1's second feedback")
 ]
 
-# Initialize database
+# Initialize DB
 def init_db():
-    db_exists = os.path.exists(DB_PATH)
     with sqlite3.connect(DB_PATH) as conn:
         conn.execute("""
             CREATE TABLE IF NOT EXISTS feedback (
@@ -34,7 +28,7 @@ def init_db():
                 message TEXT NOT NULL
             )
         """)
-        # Restore backup if table empty
+        # Insert backup if empty
         count = conn.execute("SELECT COUNT(*) FROM feedback").fetchone()[0]
         if count == 0:
             conn.executemany(
@@ -42,10 +36,10 @@ def init_db():
                 backup_feedback
             )
             conn.commit()
-# ✅ Run DB initialization immediately 
+
 init_db()
 
-# Login page
+# Login
 @app.route("/login", methods=["GET", "POST"])
 def login():
     error = None
@@ -53,13 +47,11 @@ def login():
         uid = request.form.get("uid")
         password = request.form.get("password")
 
-        # Admin
         if uid == "admin" and password == "admin":
             session["role"] = "admin"
             session["username"] = "admin"
             return redirect("/")
 
-        # Users
         elif uid in ["user1", "user2", "user3"] and password == "1234":
             session["role"] = "user"
             session["username"] = uid
@@ -85,29 +77,33 @@ def index():
     username = session["username"]
     role = session["role"]
 
-    # Handle new feedback submission
+    # Determine view (list or submit)
+    view = request.args.get("view", "submit" if role != "admin" else "list")
+
+    # POST -> save feedback
     if request.method == "POST":
         message = request.form.get("message")
         if message:
             with sqlite3.connect(DB_PATH) as conn:
-                conn.execute(
-                    "INSERT INTO feedback (username, message) VALUES (?, ?)",
-                    (username, message)
-                )
+                conn.execute("INSERT INTO feedback (username, message) VALUES (?, ?)",
+                             (username, message))
                 conn.commit()
-            return redirect("/")
+        return redirect("/?view=submit")
 
-    # Fetch feedback
-    with sqlite3.connect(DB_PATH) as conn:
-        if role == "admin":
+    feedbacks = []
+    if view == "list" and role == "admin":
+        with sqlite3.connect(DB_PATH) as conn:
             feedbacks = conn.execute(
                 "SELECT username, message FROM feedback ORDER BY id DESC"
             ).fetchall()
-        else:
-            feedbacks = []  # Users do not see other feedback
 
-    return render_template("index.html", feedbacks=feedbacks, role=role, username=username) 
+    return render_template(
+        "index.html",
+        feedbacks=feedbacks,
+        role=role,
+        username=username,
+        view=view
+    )
 
 if __name__ == "__main__":
-    # 💥 CRITICAL FIX: Ensure Flask binds to the container's external IP
-    app.run(host='0.0.0.0', port=5000, debug=True)
+    app.run(host="0.0.0.0", port=5000, debug=True)
